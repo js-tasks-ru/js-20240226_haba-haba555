@@ -7,17 +7,13 @@ export function createGetter(path) {
   const props = path.split('.');
 
   return function(obj) {
-    if (props.length === 1 && !Object.hasOwn(obj, props[0])) {
-      return;
-    }
-
     let newObj = obj;
-
-    for (let i = 0; i < props.length - 1; i++) {
-      if (Object.hasOwn(newObj, props[i])) {
-        newObj = newObj[props[i]];
+    for (let i = 0; i < props.length; i++) {
+      if (!Object.hasOwn(newObj, props[i])) {
+        return;
       }
+      newObj = newObj[props[i]];
     }
-    return newObj[props[props.length - 1]];
+    return newObj;
   };
 }
