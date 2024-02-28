@@ -8,23 +8,18 @@ export function trimSymbols(string, size) {
   if (!string) return '';
 
   const [firstLetter, ...others] = [...string];
-  const repeatedStrings = [];
+  const trimmedStrings = [];
   let currentString = firstLetter;
 
   for (let i = 0; i < others.length; i++) {
     if (currentString.at(-1) === others[i]) {
       currentString += others[i];
     } else {
-      repeatedStrings.push(currentString);
+      trimmedStrings.push(currentString.slice(0, size));
       currentString = others[i];
     }
   }
-  repeatedStrings.push(currentString);
-
-  const trimmedStrings = [];
-  for (const str of repeatedStrings) {
-    trimmedStrings.push(str.slice(0, size));
-  }
+  trimmedStrings.push(currentString.slice(0, size));
 
   return trimmedStrings.join('');
 }
