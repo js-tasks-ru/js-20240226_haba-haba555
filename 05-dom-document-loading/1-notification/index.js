@@ -30,13 +30,13 @@ export default class NotificationMessage {
     `);
   }
 
-  setNotificationTimer() {
+  createNotificationTimer() {
     this.timerId = setTimeout(() => {
       this.remove();
     }, this.duration);
   }
 
-  unsetNotificationTimer() {
+  destroyNotificationTimer() {
     clearTimeout(this.timerId);
   }
 
@@ -47,16 +47,10 @@ export default class NotificationMessage {
     NotificationMessage.lastInstance = this;
   }
 
-  show(wrapper) {
+  show(wrapper = document.body) {
     this.setNotificationLastInstance();
-
-    if (wrapper) {
-      wrapper.appendChild(this.element);
-    } else {
-      document.body.appendChild(this.element);
-    }
-
-    this.setNotificationTimer();
+    wrapper.appendChild(this.element);
+    this.createNotificationTimer();
   }
 
   remove() {
@@ -64,7 +58,7 @@ export default class NotificationMessage {
   }
 
   destroy() {
-    this.unsetNotificationTimer();
+    this.destroyNotificationTimer();
     this.remove();
   }
 }
