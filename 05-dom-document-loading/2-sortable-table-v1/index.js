@@ -1,4 +1,4 @@
-import {sortByStrings} from "../../utils/sort/sortByStrings.js";
+import {sortStrings} from "../../utils/sort/sortStrings.js";
 import {sortNumbers} from "../../utils/sort/sortNumbers.js";
 import {createElement} from "../../utils/dom/createElement.js";
 
@@ -103,7 +103,7 @@ export default class SortableTable {
 
     switch (sortType) {
     case 'string':
-      sortByStrings(this.data, field, order);
+      sortStrings(this.data, field, order);
       break;
     case 'number':
       sortNumbers(this.data, field, order);

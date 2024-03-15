@@ -1,4 +1,4 @@
-export function sortByStrings(arr, field, order = 'desc') {
+export function sortStrings(arr, field, order = 'desc') {
   if (order === 'asc') {
     return arr.sort((a, b) => a[field].localeCompare(b[field]));
   }
