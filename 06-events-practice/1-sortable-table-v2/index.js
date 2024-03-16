@@ -1,6 +1,10 @@
 import SortableTableV1 from "../../05-dom-document-loading/2-sortable-table-v1/index.js";
 
 export default class SortableTableV2 extends SortableTableV1 {
+  isSortLocally = true;
+  sortField;
+  sortOrder;
+
   constructor(headersConfig, {
     data = [],
     sorted = {}
@@ -10,17 +14,29 @@ export default class SortableTableV2 extends SortableTableV1 {
     this.createEventListeners();
   }
 
+  sortOnClient() {
+    super.sort(this.sortField, this.sortOrder);
+  }
+
+  sortOnServer() {}
+
+  sort() {
+    if (this.isSortLocally) {
+      this.sortOnClient();
+    } else {
+      this.sortOnServer();
+    }
+  }
+
   handleHeaderPointerDown = (event) => {
     const currentColumn = event.target.closest('[data-sortable="true"]');
 
     if (!currentColumn) return;
 
-    const {
-      id: sortField,
-      order: sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'
-    } = currentColumn.dataset;
+    this.sortField = currentColumn.dataset.id;
+    this.sortOrder = currentColumn.dataset.order === 'desc' ? 'asc' : 'desc';
 
-    super.sort(sortField, sortOrder);
+    this.sort();
   }
 
   createEventListeners() {
