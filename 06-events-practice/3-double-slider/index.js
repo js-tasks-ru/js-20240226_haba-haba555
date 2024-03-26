@@ -2,6 +2,7 @@ import {createElement} from "../../utils/dom/createElement.js";
 
 export default class DoubleSlider {
   element;
+  subElements = {};
   min;
   max;
   activeThumb;
@@ -22,12 +23,11 @@ export default class DoubleSlider {
       to: selected.to ?? max
     };
     this.formatValue = formatValue;
-
     this.element = createElement(this.createTemplate());
+    this.getSubElements();
     this.leftThumb = this.element.querySelector('.range-slider__thumb-left');
     this.rightThumb = this.element.querySelector('.range-slider__thumb-right');
     this.sliderProgress = this.element.querySelector('.range-slider__progress');
-
     this.createEventListeners();
   }
 
@@ -45,6 +45,13 @@ export default class DoubleSlider {
         <span data-element="to">${this.formatValue(this.selected.to)}</span>
       </div>
     `);
+  }
+
+  getSubElements() {
+    const elements = this.element.querySelectorAll('[data-element]');
+    for (const element of elements) {
+      this.subElements[element.dataset.element] = element;
+    }
   }
 
   getLeftPosition() {
@@ -86,13 +93,13 @@ export default class DoubleSlider {
   handlePointerMove = (event) => {
     if (this.activeThumb === this.leftThumb) {
       this.selected.from = Math.min(this.selected.to, this.processPointerMove(event));
-      this.element.querySelector('[data-element="from"]').textContent = this.formatValue(this.selected.from);
+      this.subElements.from.textContent = this.formatValue(this.selected.from);
       this.leftThumb.style.left = this.getLeftPosition() + '%';
       this.sliderProgress.style.left = this.getLeftPosition() + '%';
     }
     if (this.activeThumb === this.rightThumb) {
       this.selected.to = Math.max(this.selected.from, this.processPointerMove(event));
-      this.element.querySelector('[data-element="to"]').textContent = this.formatValue(this.selected.to);
+      this.subElements.to.textContent = this.formatValue(this.selected.to);
       this.rightThumb.style.right = this.getRightPosition() + '%';
       this.sliderProgress.style.right = this.getRightPosition() + '%';
     }
