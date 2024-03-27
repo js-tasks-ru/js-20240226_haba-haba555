@@ -73,7 +73,7 @@ export default class SortableTable {
 
   createTableBodyColumnTemplate(config, rowData) {
     if (config.template) {
-      return config.template(rowData);
+      return config.template(rowData[config.id]);
     }
     return `<div class="sortable-table__cell">${rowData[config.id]}</div>`;
   }
