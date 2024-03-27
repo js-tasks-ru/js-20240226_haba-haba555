@@ -17,10 +17,7 @@ export default class ColumnChartV2 extends ColumnChart {
   }
 
   updateTotalValue(data) {
-    let total = 0;
-    data.forEach(val => {
-      total += val;
-    });
+    const total = data.reduce((acc, value) => acc + value, 0);
     this.subElements.header.textContent = this.formatHeading(total);
   }
 
