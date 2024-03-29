@@ -28,18 +28,19 @@ export default class SortableTableV2 extends SortableTableV1 {
     }
   }
 
-  handleHeaderPointerDown = (event) => {
+  handleHeaderPointerDown(event) {
     const currentColumn = event.target.closest('[data-sortable="true"]');
-
     if (!currentColumn) return;
 
     this.sortField = currentColumn.dataset.id;
     this.sortOrder = currentColumn.dataset.order === 'desc' ? 'asc' : 'desc';
+    currentColumn.dataset.order = this.sortOrder;
 
     this.sort();
   }
 
   createEventListeners() {
+    this.handleHeaderPointerDown = this.handleHeaderPointerDown.bind(this);
     this.subElements.header.addEventListener('pointerdown', this.handleHeaderPointerDown);
   }
 
