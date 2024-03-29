@@ -1,5 +1,6 @@
 import fetchJson from './utils/fetch-json.js';
 import SortableTableV2 from "../../06-events-practice/1-sortable-table-v2/index.js";
+import {prepareUrl} from "../../utils/api/prepareUrl.js";
 
 const BACKEND_URL = 'https://course-js.javascript.ru';
 const OFFSET = 30;
@@ -7,6 +8,7 @@ const OFFSET = 30;
 export default class SortableTableV3 extends SortableTableV2 {
   start = 0;
   end = OFFSET;
+  isLoading = false;
 
   constructor(headersConfig, {
     data = [],
@@ -14,11 +16,10 @@ export default class SortableTableV3 extends SortableTableV2 {
     url = '',
     isSortLocally = false,
   } = {}) {
-    super(headersConfig, { data });
+    super(headersConfig, { data, sorted });
     this.url = url;
     this.isSortLocally = isSortLocally;
     this.render();
-    this.createEventListeners();
   }
 
   update() {
@@ -26,15 +27,11 @@ export default class SortableTableV3 extends SortableTableV2 {
   }
 
   async loadData() {
-    const url = new URL(this.url, BACKEND_URL);
-    url.searchParams.set('_start', this.start);
-    url.searchParams.set('_end', this.end);
-    if (!this.isSortLocally && this.sortOrder && this.sortField) {
-      url.searchParams.set('_order', this.sortOrder);
-      url.searchParams.set('_sort', this.sortField);
-    }
+    const url = prepareUrl(this.url, this.start, this.end, this.isSortLocally, this.sortOrder, this.sortField);
+    this.isLoading = true;
     const result = await fetchJson(url);
     this.data = [...this.data, ...result];
+    this.isLoading = false;
   }
 
   async render() {
@@ -65,21 +62,24 @@ export default class SortableTableV3 extends SortableTableV2 {
     await this.render();
   }
 
-   handleBodyScroll = async () => {
-     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-       this.start += OFFSET;
-       this.end += OFFSET;
-       await this.render();
-     }
-   }
+  async handleBodyScroll() {
+    if (this.isLoading) return;
 
-   createEventListeners() {
-     super.createEventListeners();
-     window.addEventListener('scroll', this.handleBodyScroll);
-   }
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      this.start += OFFSET;
+      this.end += OFFSET;
+      await this.render();
+    }
+  }
 
-   destroyEventListeners() {
-     super.destroyEventListeners();
-     window.removeEventListener('scroll', this.handleBodyScroll);
-   }
+  createEventListeners() {
+    super.createEventListeners();
+    this.handleBodyScroll = this.handleBodyScroll.bind(this);
+    window.addEventListener('scroll', this.handleBodyScroll);
+  }
+
+  destroyEventListeners() {
+    super.destroyEventListeners();
+    window.removeEventListener('scroll', this.handleBodyScroll);
+  }
 }

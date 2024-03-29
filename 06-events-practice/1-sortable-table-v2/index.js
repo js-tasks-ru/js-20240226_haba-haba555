@@ -28,7 +28,7 @@ export default class SortableTableV2 extends SortableTableV1 {
     }
   }
 
-  handleHeaderPointerDown = (event) => {
+  handleHeaderPointerDown(event) {
     const currentColumn = event.target.closest('[data-sortable="true"]');
     if (!currentColumn) return;
 
@@ -40,6 +40,7 @@ export default class SortableTableV2 extends SortableTableV1 {
   }
 
   createEventListeners() {
+    this.handleHeaderPointerDown = this.handleHeaderPointerDown.bind(this);
     this.subElements.header.addEventListener('pointerdown', this.handleHeaderPointerDown);
   }
 
